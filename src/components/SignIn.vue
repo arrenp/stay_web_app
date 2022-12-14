@@ -1,38 +1,67 @@
 <template>
-    <v-container>
-      <v-text-field
-        v-model="email"
-        color="primary"
-        label="Email"
-        variant="underlined"
-      ></v-text-field>
+  <v-container>
+    <v-text-field
+      v-model="email"
+      color="primary"
+      label="Email"
+      variant="outlined"
+    ></v-text-field>
 
-      <v-text-field
-        v-model="password"
-        color="primary"
-        label="Password"
-        placeholder="Enter your password"
-        variant="underlined"
-      ></v-text-field>
-    </v-container>
+    <v-text-field
+      v-model="password"
+      :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+      :rules="[rules.required, rules.min]"
+      :type="show1 ? 'text' : 'password'"
+      name="input-10-1"
+      label="Password"
+      hint="At least 8 characters"
+      counter
+      variant="outlined"
+      @click:append="show1 = !show1"
+    ></v-text-field>
+    <v-checkbox variant="outlined" v-model="remember_me" label="Remember Me"></v-checkbox>
+  </v-container>
 
-    <v-divider></v-divider>
+  <v-divider></v-divider>
 
-    <v-card-actions>
-      <v-spacer></v-spacer>
+  <v-card-actions>
+    <v-spacer></v-spacer>
 
-      <v-btn color="success">
-        Sign In
+    <v-btn @click="signIn" color="success">
+      Sign In
 
-        <v-icon icon="mdi-chevron-right" end></v-icon>
-      </v-btn>
-    </v-card-actions>
+      <v-icon icon="mdi-chevron-right" end></v-icon>
+    </v-btn>
+  </v-card-actions>
 </template>
+
 <script lang="ts">
+import { useUserStore } from "../stores/user";
+
 export default {
-  data: () => ({
-    email: null,
-    password: null
-  }),
+  data() {
+    return {
+      show1: false,
+      show2: true,
+      email: null,
+      password: null,
+      remember_me: 0,
+      rules: {
+        required: (value: string) => !!value || "Required.",
+        min: (v: string) => v.length >= 8 || "Min 8 characters",
+        emailMatch: () => `The email and password you entered don't match`,
+      },
+    };
+  },
+  setup() {
+    const userStore = useUserStore();
+
+    return { userStore };
+  },
+  methods: {
+    signIn() {
+      this.userStore.signInUser({ user: { email: this.email, password: this.password, remember_me: this.remember_me } });
+    },
+  },
 };
 </script>

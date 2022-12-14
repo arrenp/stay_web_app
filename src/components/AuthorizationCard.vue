@@ -24,7 +24,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="mx-auto" max-width="344" :title="STATUS_TITLE[currentStatus]">
+  <v-card class="mx-auto" max-width="644" :title="STATUS_TITLE[currentStatus]">
     <SignIn v-if="currentStatus == 1" />
     <WelcomeNotLoggedIn
       @sign-in-status="currentStatus = 1"

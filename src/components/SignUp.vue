@@ -19,6 +19,18 @@
       variant="outlined"
       @click:append="show1 = !show1"
     ></v-text-field>
+    <v-text-field
+      v-model="password_confirmation"
+      :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+      :rules="[rules.required, rules.min]"
+      :type="show1 ? 'text' : 'password'"
+      name="input-10-1"
+      label="Password Confirmation"
+      hint="At least 8 characters"
+      counter
+      variant="outlined"
+      @click:append="show1 = !show1"
+    ></v-text-field>
   </v-container>
 
   <v-divider></v-divider>
@@ -36,7 +48,6 @@
 
 <script lang="ts">
 import { useUserStore } from "../stores/user";
-const store = useUserStore();
 
 export default {
   data() {
@@ -45,6 +56,7 @@ export default {
       show2: true,
       email: null,
       password: null,
+      password_confirmation: null,
       rules: {
         required: (value: string) => !!value || "Required.",
         min: (v: string) => v.length >= 8 || "Min 8 characters",
@@ -52,10 +64,14 @@ export default {
       },
     };
   },
+  setup() {
+    const userStore = useUserStore();
+    
+    return { userStore };
+  },
   methods: {
     signUp() {
-      console.log(this.email);
-      store.postUser({ email: this.email, password: this.password });
+      this.userStore.signUpUser({ user: { email: this.email, password: this.password, password_confirmation: this.password_confirmation } });
     },
   },
 };
