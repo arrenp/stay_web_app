@@ -3,12 +3,14 @@
     <v-text-field
       v-model="email"
       color="primary"
+      density="compact"
       label="Email"
       variant="outlined"
     ></v-text-field>
 
     <v-text-field
       v-model="password"
+      density="compact"
       :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
       :rules="[rules.required, rules.min]"
       :type="show1 ? 'text' : 'password'"
@@ -21,6 +23,7 @@
     ></v-text-field>
     <v-text-field
       v-model="password_confirmation"
+      density="compact"
       :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
       :rules="[rules.required, rules.min]"
       :type="show1 ? 'text' : 'password'"
@@ -38,11 +41,15 @@
   <v-card-actions>
     <v-spacer></v-spacer>
 
-    <v-btn @click="signUp" color="success">
+    <v-btn v-if="!progress" @click="signUp" color="success">
       Sign Up
 
       <v-icon icon="mdi-chevron-right" end></v-icon>
     </v-btn>
+    <div v-else>
+      <div v-if="progress2">Account created. Signing in...</div>
+      <v-progress-circular indeterminate color="green"></v-progress-circular>
+    </div>
   </v-card-actions>
 </template>
 
@@ -57,6 +64,8 @@ export default {
       email: null,
       password: null,
       password_confirmation: null,
+      progress: false,
+      progress2: false,
       rules: {
         required: (value: string) => !!value || "Required.",
         min: (v: string) => v.length >= 8 || "Min 8 characters",
@@ -66,12 +75,36 @@ export default {
   },
   setup() {
     const userStore = useUserStore();
-    
+
     return { userStore };
   },
   methods: {
     signUp() {
-      this.userStore.signUpUser({ user: { email: this.email, password: this.password, password_confirmation: this.password_confirmation } });
+      this.progress = true;
+      this.userStore
+        .signUpUser({
+          user: {
+            email: this.email,
+            password: this.password,
+            password_confirmation: this.password_confirmation,
+          },
+        })
+        .then(() => {
+          this.progress2 = true;
+          this.userStore
+            .signInUser({
+              user: {
+                email: this.email,
+                password: this.password,
+                remember_me: 0,
+              },
+              commit: "Log in",
+            })
+            .then(() => {
+              this.progress = false;
+              this.progress2 = false;
+            });
+        });
     },
   },
 };

@@ -1,9 +1,9 @@
 <script lang="ts">
-import SignUp from "./SignUp.vue";
-import SignIn from "./SignIn.vue";
-import WelcomeNotLoggedIn from "./WelcomeNotLoggedIn.vue";
+import SignUp from "./AuthSignUp.vue";
+import SignIn from "./AuthSignIn.vue";
+import WelcomeNotLoggedIn from "./AuthWelcomeNotLoggedIn.vue";
 const STATUS_TITLE: string[] = [
-  "Welcome To Staywire",
+  "Welcome To Stay Buddy",
   "User Log In",
   "User Registration",
 ];
@@ -24,7 +24,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="mx-auto" max-width="644" :title="STATUS_TITLE[currentStatus]">
+  <v-card class="mx-auto" width="420" :title="STATUS_TITLE[currentStatus]">
     <SignIn v-if="currentStatus == 1" />
     <WelcomeNotLoggedIn
       @sign-in-status="currentStatus = 1"
